@@ -1,8 +1,8 @@
 
 
 <center>
-  <a href="youtube.com/@clovermods">
-    <img src="https://telegra.ph/file/41598dec8462fb039c130.jpg?style=social">
+  <a href="https://youtube.com/@clovermods">
+    <img src="https://telegra.ph/file/41598dec8462fb039c130.jpg" width="610">
   </a>
 </center>
 
