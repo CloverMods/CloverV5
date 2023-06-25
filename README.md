@@ -1,7 +1,7 @@
 
 
 <center>
-<img src="https://telegra.ph/file/41598dec8462fb039c130.jpg">
+<img style="border-radius: 50%;" src="https://telegra.ph/file/41598dec8462fb039c130.jpg">
 </center>
 
 # Clover v5
