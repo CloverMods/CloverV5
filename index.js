@@ -13,12 +13,16 @@ const ffmpeg = require('fluent-ffmpeg')
 const { exec, spawn, execSync } = require("child_process")
 const axios = require("axios")
 const { color, bgcolor, logs } = require('./lib/color');
-
- // Configuração
+const  bemvindotexto = JSON.parse(fs.readFileSync('./lib/TextoDoBemvindo.json'));
+ // CONFIGURAÇÃO DONO E ETC
 const settings = JSON.parse(fs.readFileSync('./config.json'));
+const nomeBot = settings.nomeBot
+const NomeDoBot = nomeBot
 
  const { default: makeWASocket, downloadContentFromMessage, useMultiFileAuthState, makeInMemoryStore, DisconnectReason, WAGroupMetadata, relayWAMessage,	MediaPathMap, mentionedJid, processTime, MediaType, Browser, MessageType, Presence, Mimetype, Browsers, delay, fetchLatestBaileysVersion, MessageRetryMap, extractGroupMetadata, generateWAMessageFromContent, proto} = require('@WhiskeySockets/baileys');
 
+
+// INÍCIO DS FUNÇÃO clover_mods 
 async function clover_mods() {
 const store = makeInMemoryStore({
 logger: P().child({ 
@@ -27,9 +31,9 @@ stream: 'store'
  })
 })
 
-// Conexão com o qr
+// NOME DO ARQUIVO DO CÓDIGO QR
 const { state, saveCreds } = await useMultiFileAuthState('./arquivo-qr')
-
+// BANER DO TERMINAL
 const cfonts = require('cfonts')
 const banner = cfonts.render(('Clover|V5'),
 {
@@ -37,6 +41,8 @@ const banner = cfonts.render(('Clover|V5'),
  align: "center",
  gradient: ["red","blue"]
 })
+
+// CONEXÃO 
 const client = makeWASocket({
 logger: P({ level: 'silent' }),
 printQRInTerminal: true,
@@ -65,6 +71,7 @@ console.log("Tem conversas", store.chats.all())
 client.ev.on("contacts.set", () => {
 console.log("Tem contatos", Object.values(store.contacts))
 })
+// CONEXÃO ATUALIZAÇÃO 
 client.ev.on("connection.update", (update) => {
 const { connection, lastDisconnect } = update
 if(connection === "close") {
@@ -79,7 +86,64 @@ console.log(chalk.keyword("red")("Conectado com sucesso!"));
 }
 })
 
+
+
+const welkom = JSON.parse(fs.readFileSync('./lib/welkom.json'));
+const  bemvindotexto = JSON.parse(fs.readFileSync('./lib/TextoDoBemvindo.json'));
+const trevo = bemvindotexto.texto
+
+
+// GRUPO ATUALIZAÇÃO 
+client.ev.on('groups.update', async grup => {
+console.log(grup)
+try {
+ppgc = await client.profilePictureUrl(grup[0].id, 'image')
+} catch {
+ppgc = 'https://telegra.ph/file/3983c55ac7f3ebea225d3.jpg'
+}
+let wm_fatih = { url : ppgc }
+if (grup[0].announce == true) {
+client.sendMessage(grup[0].id, { text:`「 Alterações nas configurações do grupo 」\n\nO grupo foi fechado pelo administrador, agora só os administradores podem enviar mensagens !\n${NomeDoBot}`})
+} else if(grup[0].announce == false) {
+client.sendMessage(grup[0].id, { text:`「 Alterações nas configurações do grupo 」\n\nO grupo foi aberto pelo administrador, agora os participantes podem enviar mensagens !\n${NomeDoBot}`})
+} else if (grup[0].restrict == true) {
+client.sendMessage(grup[0].id, { text:`「 Alterações nas configurações do grupo 」\n\nAs informações do grupo foram restritas, agora apenas administradores podem editar informações do grupo !\n${NomeDoBot}`})
+} else if (grup[0].restrict == false) {
+client.sendMessage(grup[0].id, { text:`「 Alterações nas configurações do grupo 」\n\nInformações do grupo foram abertas, agora os participantes podem editar informações do grupo !\n${NomeDoBot}`})
+} else {
+client.sendMessage(grup[0].id, { text:`「 Alterações nas configurações do grupo 」\n\nO nome do Grupo foi alterado para *${grup[0].subject}*\n${NomeDoBot}`})
+}
+})
+
+
+// PARTICIPANTES DE GRUPO ATUALIZAÇÃO 
+client.ev.on('group-participants.update', async (anu) => {
+console.log(anu)
+if(welkom.includes(anu.id)) {
+try {
+let metadata = await client.groupMetadata(anu.id)
+let participants = anu.participants
+for (let num of participants) {
+try {
+ppimg = await client.profilePictureUrl(anu.participants[0])
+} catch {
+ppimg = 'https://telegra.ph/file/41598dec8462fb039c130.jpg'
+}
+memb = metadata.participants.length
+if (anu.action == 'add') {
+num = anu.participants[0]
+client.sendMessage(anu.id, { image: {url: `${ppimg}`},caption: `${trevo}`,headerType: 4
+})
+} else if (anu.action == 'remove') {
+client.sendMessage(anu.id,{ image: {url: `${ppimg}`}, caption: `OLA POVO DO GRUPO:\n*${metadata.subject}*\n\nO Membro: @${num.split('@')[0]}\n\nSaiu do Grp ou foi Banido.`})
+}
+}} catch (err) {
+console.log(err)
+}}})
+
+// MENSAGEM ATUALIZAÇÃO 
 client.ev.on('messages.upsert', connection => {
+//console.log(connection)
 const info = connection.messages[0];
 if (info.key.fromMe) return;
 if (connection.type != 'notify') return;
@@ -89,25 +153,5 @@ require('./clover.js')(client, info, settings, color)});
 client.ev.on('creds.update', saveCreds)
 }
 
+// CHAMA A FUNÇÃO clover_mods QUE E PRATICAMENTE O BOT
 clover_mods(), (err) => console.log("[ Error ]", color(String(err), 'red'));
-
-var express = require('express'),
-    cors = require('cors'),
-    secure = require('ssl-express-www');
-
-
-var app = express()
-var mainrouter = require('./main')
-app.enable('trust proxy');
-app.set("json spaces",2)
-app.use(cors())
-app.use(secure)
-app.use(express.static("public"))
-
-app.use('/', mainrouter);
-//app.use('/api', mainrouter);
-
-
-app.listen(8080, () => {
-    console.log("Server running on port 8080")
-})

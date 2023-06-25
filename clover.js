@@ -13,6 +13,7 @@ const { banner, getGroupAdmins, getBuffer, getRandom, getExtension } = require('
 const { fetchJson } = require('./lib/fetcher')
 const sotoy = JSON.parse(fs.readFileSync('./lib/sotoy.json'))
 const configurações = JSON.parse(fs.readFileSync('./config.json'))
+const textobv = JSON.parse(fs.readFileSync('./lib/TextoDoBemvindo.json'))
 const { convertSticker } = require("./lib/swm.js");
 const ffmpeg = require('fluent-ffmpeg')
 const { exec, spawn, execSync } = require("child_process")
@@ -121,6 +122,12 @@ const reply = (texto) => {
 const participants = isGroup ? await groupMetadata.participants : ''
 
 
+
+const welkom = JSON.parse(fs.readFileSync('./lib/welkom.json'));
+const isWelkom = isGroup ? welkom.includes(from) : false
+
+
+
 // Consts isQuoted
 const isImage = type == 'imageMessage'
 const isVideo = type == 'videoMessage'
@@ -201,6 +208,62 @@ switch(comando) {
 // COMANDOS COM PREFIXO COMEÇAM A PARTIR DAQUI!!! \\
 
 
+case "ytvd":
+case "playvideo":{
+const hx = require('./lib/ytdl.js');
+const link = q;
+hx.ytv(link)
+    .then(result => {
+let buttonMessage4 = {video: { url: `${result.dl_link}` },caption: `${result.title}\n`}
+client.sendMessage(from, buttonMessage4, { quoted: info })
+});
+}break
+
+case "ytad":
+case "playaudio":{
+const hx = require('./lib/ytdl.js');
+const link = q;
+hx.ytv(link)
+    .then(result => {
+let buttonMessage4 = {audio: { url: `${result.dl_link}` }, mimetype: 'audio/mpeg'}
+client.sendMessage(from, buttonMessage4, { quoted: info })
+});
+}break
+
+case 'novamensagem':
+  if (!isOwner) return reply(resposta.dono);
+  const novaMensagem = `${q}`;
+  textobv.texto = novaMensagem
+  fs.writeFileSync('./lib/TextoDoBemvindo.json', JSON.stringify(textobv, null, '\t'))
+  reply('A mensagem de boas-vindas foi alterada com sucesso.');
+  break;
+  
+  
+  
+case 'welcome':
+case 'bemvindo':
+if (!isGroup) return reply(`SÓ EM GRUPO`)
+if (!isGroupAdmins) return reply(`PRECISA SER ADMININASTROR`)
+if (!isBotGroupAdmins) return reply(`BOT PREPRECISA SER ADMININASTROR`)
+if (Number(args[0]) === 1) {
+if (isWelkom) return reply('Ja esta ativo')
+welkom.push(from)
+fs.writeFileSync('./lib/welkom.json', JSON.stringify(welkom))
+reply(' Ativou com sucesso o recurso de bem vindo neste grupo 📝')
+} else if (Number(args[0]) === 0) {
+if (!isWelkom) return reply('Ja esta Desativado')
+pesquisar = from
+processo = welkom.indexOf(pesquisar)
+while(processo >= 0){
+welkom.splice(processo, 1)
+processo = welkom.indexOf(pesquisar)
+}
+fs.writeFileSync('./lib/welkom.json', JSON.stringify(welkom))
+reply('‼️ Desativou com sucesso o recurso de bemvindo neste grupo✔️')
+} else {
+reply("1 para ativar, 0 para desativar")
+}
+break
 
 
 
