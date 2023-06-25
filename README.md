@@ -6,7 +6,7 @@
   </a>
 </center>
 
-# Clover v5
+# Clover V5
 @clovermods yt
 
 # Como Instalar o Bot
