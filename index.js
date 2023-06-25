@@ -93,7 +93,7 @@ const  bemvindotexto = JSON.parse(fs.readFileSync('./lib/TextoDoBemvindo.json'))
 const trevo = bemvindotexto.texto
 
 
-// GRUPO ATUALIZAÇÃO 
+// GRUPO ATUALIZAÇÃO  
 client.ev.on('groups.update', async grup => {
 console.log(grup)
 try {
