@@ -76,7 +76,7 @@ echo
 echo "${YELLOW}         CLOVER-MODS"
 echo "${LIGHTPURPLE}"
 
-   node app.js
+   node index.js
    sleep 1
 
 done
